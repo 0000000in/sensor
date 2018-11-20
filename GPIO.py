@@ -1,3 +1,5 @@
+#-*-coding:utf-8-*-
+
 import RPi.GPIO as GPIO
 import time
 import threading
@@ -5,6 +7,7 @@ import threading
 def setGPIO():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
+
 #----------------------LCD-------------------------
 #Define GPIO to LCD mapping
 LCD_E = 26
@@ -27,6 +30,7 @@ LCD_LINE_2 = 0xC0 #LCD RAM address for the 2nd line
 E_PULSE = 0.0005
 E_DELAY = 0.0005
 
+#창문 LCD 기본값
 def setLCD1():
     GPIO.setup(LCD_E, GPIO.OUT)
     GPIO.setup(LCD_RS, GPIO.OUT)
@@ -40,19 +44,22 @@ def setLCD1():
     lcd_init()
 
     while True:
-        #Send some text
+        #창문 LCD 첫번째 표시 (미세먼지) / 3초 동안 지속
         lcd_string("1234567890123456", LCD_LINE_1)
         lcd_string("ABCDEFGHIJKLMNOP", LCD_LINE_2)
         time.sleep(3)
-
+        
+        #창문 LCD 두번째 표시 (오늘날씨) / 3초 동안 지속
         lcd_string("1234567890123456", LCD_LINE_1)
         lcd_string("abcdefghijklmnop", LCD_LINE_2)
         time.sleep(3)
 
+        #창문 LCD 세번째 표시 (내일날씨) / 3초 동안 지속
         lcd_string("1234567890123456", LCD_LINE_1)
         lcd_string("1234567890123456", LCD_LINE_2)
         time.sleep(3)
 
+#창문 열렸을 때 LCD 기본값
 def setLCD2():
     GPIO.setup(LCD_E, GPIO.OUT)
     GPIO.setup(LCD_RS, GPIO.OUT)
@@ -65,7 +72,7 @@ def setLCD2():
     #initialise display
     lcd_init()
 
-    #Send some text
+    #창문 열렸을 때 표시할 문구 입력
     lcd_string("1234567890123456", LCD_LINE_1)
     lcd_string("CLOSE THE WINDOW", LCD_LINE_2)
     time.sleep(5)
@@ -127,8 +134,6 @@ def lcd_string(message, line):
     for i in range(LCD_WIDTH):
         lcd_byte(ord(message[i]),LCD_CHR)
 #--------------------------------------------------
-    
-#-------------------openWindows--------------------
 #-------------setUltrasonic&setPiezo---------------
 GPIO_TRIGGER = 0
 GPIO_ECHO = 1
@@ -141,6 +146,8 @@ def setUltrasonic():
         dist = distance()
         print "Measured Distance = %.1f cm" %dist
         time.sleep(0.5)
+        
+    #창문 열렸을 때 거리 기준값 설정
         if (dist >= 20):
             setPiezo()
             setLCD2()
@@ -171,6 +178,8 @@ def setPiezo():
     p = GPIO.PWM(GPIO_PIEZO, 100)
     p.start(100)
     p.ChangeDutyCycle(90)
+    
+    #창문 열렸을 때 소리 지속 시간 설정
     for i in range(0, 3, 1):
         for j in range(0, 3, 1):        
             p.ChangeFrequency(392)

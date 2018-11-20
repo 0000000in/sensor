@@ -27,7 +27,7 @@ LCD_LINE_2 = 0xC0 #LCD RAM address for the 2nd line
 E_PULSE = 0.0005
 E_DELAY = 0.0005
 
-def setLCD():
+def setLCD1():
     GPIO.setup(LCD_E, GPIO.OUT)
     GPIO.setup(LCD_RS, GPIO.OUT)
     #GPIO.setup(LCD_RW, GPIO.OUT)
@@ -53,6 +53,23 @@ def setLCD():
         lcd_string("1234567890123456", LCD_LINE_2)
         time.sleep(3)
 
+def setLCD2():
+    GPIO.setup(LCD_E, GPIO.OUT)
+    GPIO.setup(LCD_RS, GPIO.OUT)
+    #GPIO.setup(LCD_RW, GPIO.OUT)
+    GPIO.setup(LCD_D4, GPIO.OUT)
+    GPIO.setup(LCD_D5, GPIO.OUT)
+    GPIO.setup(LCD_D6, GPIO.OUT)
+    GPIO.setup(LCD_D7, GPIO.OUT)
+
+    #initialise display
+    lcd_init()
+
+    #Send some text
+    lcd_string("1234567890123456", LCD_LINE_1)
+    lcd_string("CLOSE THE WINDOW", LCD_LINE_2)
+    time.sleep(5)
+        
 def lcd_init():
     lcd_byte(0x33, LCD_CMD)
     lcd_byte(0x32, LCD_CMD)
@@ -123,9 +140,10 @@ def setUltrasonic():
     while True:    
         dist = distance()
         print "Measured Distance = %.1f cm" %dist
-        time.sleep(1)
+        time.sleep(0.5)
         if (dist >= 20):
             setPiezo()
+            setLCD2()
 
 def distance():
     GPIO.output(GPIO_TRIGGER, True)
@@ -165,7 +183,7 @@ if __name__=='__main__':
         th = threading.Thread(target=setUltrasonic)
         th.start()
         while True:
-            setLCD()
+            setLCD1()
     except KeyboardInterrupt:
         pass
     finally:

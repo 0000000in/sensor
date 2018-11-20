@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-#현재온습도.py
+#FND.py
 
 import smbus
 import time
